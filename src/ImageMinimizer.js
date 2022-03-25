@@ -42,6 +42,7 @@ class ImageMinimizer {
       webpackConfig.optimization.minimizer || [];
     webpackConfig.optimization.minimizer.push(
       new ImageMinimizerPlugin({
+        deleteOriginalAssets: false,
         minimizer: {
           implementation: ImageMinimizerPlugin.squooshMinify,
           options: this.squooshOptions,
@@ -50,12 +51,23 @@ class ImageMinimizer {
           ? [
               {
                 type: "asset",
-                filename: "[path][name][ext].webp",
+                filename: "[path][name][ext]",
                 implementation: ImageMinimizerPlugin.squooshGenerate,
                 options: this.webpOptions,
+                filter: (source, sourcePath) => {
+                  if (
+                    sourcePath.endsWith(".svg") ||
+                    sourcePath.endsWith(".webp") ||
+                    sourcePath.endsWith(".avif")
+                  ) {
+                    return false;
+                  }
+
+                  return true;
+                },
               },
             ]
-          : [],
+          : undefined,
       })
     );
   }

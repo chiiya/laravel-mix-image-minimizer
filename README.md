@@ -1,74 +1,39 @@
-<br />
-<div align="center">
-  <p align="center">
-    <a href="https://opensource.org/licenses/MIT" target="_blank"><img src="https://img.shields.io/badge/license-MIT-green.svg"></a>
-    <a href="https://www.npmjs.com/package/@chiiya/laravel-mix-imagemin" target="_blank"><img src="https://img.shields.io/npm/v/@chiiya/laravel-mix-imagemin.svg"></a>
-    <a href="https://prettier.io" target="_blank"><img src="https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat"></a>
-  </p>
+# Laravel Mix Image Minimizer
+[![Latest Version on NPM](https://img.shields.io/npm/v/@chiiya/laravel-mix-image-minimizer.svg?style=flat-square)](https://npmjs.com/package/@chiiya/laravel-mix-image-minimizer)
+[![npm](https://img.shields.io/npm/dt/@chiiya/laravel-mix-image-minimizer.svg?style=flat-square)](https://www.npmjs.com/package/@chiiya/laravel-mix-image-minimizer)
+[![Software License](https://img.shields.io/npm/l/@chiiya/laravel-mix-image-minimizer.svg?style=flat-square)](LICENSE)
 
-  <strong>
-    <h2 align="center">Laravel Mix Imagemin</h2>
-  </strong>
-
-  <p align="center">
-    Laravel Mix plugin for optimizing images using imagemin.
-  </p>
-
-  <p align="center">
-    <strong>
-    <a href="#installation">installation</a>
-      &nbsp; &middot; &nbsp;
-      <a href="#usage">usage</a>
-      &nbsp; &middot; &nbsp;
-      <a href="#options">options</a>
-    </strong>
-  </p>
-</div>
-<br />
+This extension adds support for [image-minimizer-webpack-plugin](https://webpack.js.org/plugins/image-minimizer-webpack-plugin/) 
+to [Laravel Mix](https://github.com/JeffreyWay/laravel-mix). It uses the [squoosh](https://github.com/GoogleChromeLabs/squoosh/tree/dev/libsquoosh) 
+implementation, since imagemin [is not maintained anymore](https://github.com/imagemin/imagemin/issues/385).
 
 ## Installation
 
-<pre>npm i --save-dev <a href="https://www.npmjs.com/package/@chiiya/laravel-mix-imagemin">@chiiya/laravel-mix-imagemin</a></pre>
+```
+npm i -D @chiiya/laravel-mix-image-minimizer
+```
 
 ## Usage
-Require it in your `webpack.mix.js` file, then pass it a valid [`copy-webpack-plugin`](https://webpack.js.org/plugins/copy-webpack-plugin/)
-config:
+
+Require the extension inside your `webpack.mix.js` and use it like so:
 
 ```js
-require('@chiiya/laravel-mix-imagemin');
+const mix = require('laravel-mix');
+require('@chiiya/laravel-mix-image-minimizer');
 
-mix
-  .imagemin({
-    patterns: [
-      {
-        from: '**/*',
-        to: 'images',
-        context: 'resources/images',
-      },
-    ],
-  });
+mix.images({
+  webp: true,
+});
 ```
 
 ## Options
 
-The `mix.imagemin` function accepts two parameters: options for the [`copy-webpack-plugin`](https://webpack.js.org/plugins/copy-webpack-plugin/)
-and options for the [`imagemin-webpack-plugin`](https://github.com/Klathmon/imagemin-webpack-plugin).
+| Name             | Type            | Default                                                      | Description                                                  |
+| ---------------- | --------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| `patterns`       | `Array<Object>` | `[{ from: "**/*", to: "images", context: "resources/images" }]` | `pattern` option as supported by the `copy-webpack-plugin`   |
+| `webp`           | `Boolean`       | `false`                                                      | If enabled, additional `webp` versions of all images will be generated |
+| `squooshOptions` | `Object`        | `undefined`                                                  | Custom `squoosh` configuration for image minification        |
+| `copyOptions`    | `Object`        | `{ patterns: options.patterns }`                             | Additional configuration for the `copy-webpack-plugin`       |
+| `webpOptions`    | `Object`        | `{ encodeOptions: { webp: { quality: 90 }}}`                 | Custom `squoosh` configuration for generating webp images    |
 
-```js
-require('@chiiya/laravel-mix-imagemin');
 
-mix
-  .imagemin({
-    patterns: [
-      {
-        from: '**/*',
-        to: 'images',
-        context: 'resources/images',
-      },
-    ],
-  }, {
-    pngquant: {
-      quality: '95-100'
-    }
-  });
-```

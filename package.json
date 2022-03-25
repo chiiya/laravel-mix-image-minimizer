@@ -1,11 +1,13 @@
 {
   "name": "@chiiya/laravel-mix-image-minimizer",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "author": "Elisha Witte <github@chiiya.moe>",
   "license": "MIT",
   "description": "ImageMinimizerWebpackPlugin for Laravel Mix",
   "main": "index.js",
-  "files": ["src"],
+  "files": [
+    "src"
+  ],
   "keywords": [
     "laravel-mix",
     "mix",

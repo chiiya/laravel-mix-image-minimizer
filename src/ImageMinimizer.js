@@ -7,14 +7,11 @@ class ImageMinimizer {
   }
 
   dependencies() {
-    return [
-      "@squoosh/lib",
-      "copy-webpack-plugin",
-      "image-minimizer-webpack-plugin",
-    ];
+    return ["copy-webpack-plugin", "image-minimizer-webpack-plugin"];
   }
 
   register(options = {}) {
+    this.implementation = options.implementation || "squoosh";
     this.patterns = options.patterns || [
       {
         from: "**/*",
@@ -27,14 +24,31 @@ class ImageMinimizer {
       options.copyOptions || {}
     );
     this.webp = options.webp || false;
-    this.webpOptions = options.webpOptions || {
-      encodeOptions: {
-        webp: {
-          quality: 90,
-        },
-      },
-    };
-    this.squooshOptions = options.squooshOptions;
+    this.webpOptions =
+      options.webpOptions ||
+      (this.implementation === "squoosh"
+        ? {
+            encodeOptions: {
+              webp: {
+                quality: 90,
+              },
+            },
+          }
+        : {
+            plugins: ["imagemin-webp"],
+          });
+    this.options =
+      options.options ||
+      (this.implementation === "squoosh"
+        ? undefined
+        : {
+            plugins: [
+              "imagemin-gifsicle",
+              "imagemin-mozjpeg",
+              "imagemin-pngquant",
+              "imagemin-svgo",
+            ],
+          });
   }
 
   webpackConfig(webpackConfig) {
@@ -44,15 +58,21 @@ class ImageMinimizer {
       new ImageMinimizerPlugin({
         deleteOriginalAssets: false,
         minimizer: {
-          implementation: ImageMinimizerPlugin.squooshMinify,
-          options: this.squooshOptions,
+          implementation:
+            this.implementation === "squoosh"
+              ? ImageMinimizerPlugin.squooshMinify
+              : ImageMinimizerPlugin.imageminMinify,
+          options: this.options,
         },
         generator: this.webp
           ? [
               {
                 type: "asset",
                 filename: "[path][name][ext]",
-                implementation: ImageMinimizerPlugin.squooshGenerate,
+                implementation:
+                  this.implementation === "squoosh"
+                    ? ImageMinimizerPlugin.squooshGenerate
+                    : ImageMinimizerPlugin.imageminGenerate,
                 options: this.webpOptions,
                 filter: (source, sourcePath) => {
                   if (

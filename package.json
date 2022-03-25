@@ -31,7 +31,6 @@
     "laravel-mix": "^6.0.0"
   },
   "dependencies": {
-    "@squoosh/lib": "^0.4.0",
     "copy-webpack-plugin": "^10.2.4",
     "image-minimizer-webpack-plugin": "^3.2.3",
     "multimatch": "^5.0.0"
